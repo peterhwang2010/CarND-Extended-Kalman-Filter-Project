@@ -37,8 +37,8 @@ FusionEKF::FusionEKF() {
     * Set the process and measurement noises
   */
 
-  P_ = MatrixXd(4, 4);
-  P_ << 1, 0, 0, 0,
+  ekf_.P_ = MatrixXd(4, 4);
+  ekf_.P_ << 1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1000, 0,
         0, 0, 0, 1000;
@@ -90,8 +90,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       double vx = rho_dot * cos(phi);
       double vy = rho_dot * sin(phi);
  
-      if (x < 0.0001) { x = 0.0001 }
-      if (y < 0.0001) { y = 0.0001 }
+      if (x < 0.0001) { x = 0.0001; }
+      if (y < 0.0001) { y = 0.0001; }
 
       ekf_.x_ << x, y, vx, vy;
     }
