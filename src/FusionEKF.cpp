@@ -74,13 +74,35 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
+
+      // range
+      double rho = measurement_pack.raw_measurements_[0];
+      
+      // bearing
+      double phi = measurement_pack.raw_measurements_[1];
+      
+      // velocity of range
+      double rho_dot = measurement_pack.raw_measurements_[2];
+
+      double x = rho * cos(phi);
+      double y = rho * sin(phi);
+
+      double vx = rho_dot * cos(phi);
+      double vy = rho_dot * sin(phi);
+ 
+      if (x < 0.0001) { x = 0.0001 }
+      if (y < 0.0001) { y = 0.0001 }
+
+      ekf_.x_ << x, y, vx, vy;
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       /**
       Initialize state.
       */
+      ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
     }
 
+    previous_timestamp_ = measurement_pack.timestamp_ ;
     // done initializing, no need to predict or update
     is_initialized_ = true;
     return;
